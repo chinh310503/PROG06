@@ -19,15 +19,26 @@ class ChallengeController extends Controller
     }
     public function create(Request $request){
         if($request->hasFile('challengefile')){
-            $filename=$request->challengefile->getClientOriginalName();
+            $file = $request->file('challengefile');
+            $extension = $file->getClientOriginalExtension();
+            
+            if($extension !== 'txt') {
+                return back()->withErrors(['challengefile' => 'Only .txt files are allowed.']);
+            }
+            
+            $filename = $file->getClientOriginalName();
+            $hint = $request->hint ?? 'No hint provided';
+            
             DB::table('challenge')->insert([
-                'hint'=>$request->hint,
-                'filename'=>$filename,
+                'hint' => $hint,
+                'filename' => $filename,
             ]);
-            $request->challengefile->move(public_path('challenge'),$filename);
+            
+            $file->move(public_path('challenge'), $filename);
         }
-        $challenge=DB::table('challenge')->get();
-        return view('backend.challenge.teacher',compact('challenge'));
+        
+        $challenge = DB::table('challenge')->get();
+        return view('backend.challenge.teacher', compact('challenge'));
     }
     public function download($filename){
         $path=public_path('challenge/'.$filename);
