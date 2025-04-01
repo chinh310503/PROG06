@@ -43,39 +43,35 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name'              => 'required|string|max:255',
-            'email'             => 'required|string|email|max:255|unique:users',
-            'password'          => 'required|string|min:8',
-            'gender'            => 'required|string',
-            'phone'             => 'required|string|max:255'
-        ]);
+        $name = $request->name;
+        $email = $request->email;
+        $password = md5($request->password);
 
-        $user = User::create([
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'password'          => Hash::make($request->password)
-        ]);
+        $sql = "INSERT INTO users (name, password, email) VALUES ('$name', '$password' ,'$email')";
+        echo $sql;
+        DB::statement($sql);
+        $userId = DB::getPdo()->lastInsertId();
 
         if ($request->hasFile('profile_picture')) {
-            $profile = Str::slug($user->name).'-'.$user->id.'.'.$request->profile_picture->getClientOriginalExtension();
+            $profile = str_replace(' ', '-', strtolower($name)) . "-$userId." . $request->profile_picture->getClientOriginalExtension();
             $request->profile_picture->move(public_path('images/profile'), $profile);
         } else {
             $profile = 'avatar.png';
         }
-        $user->update([
-            'profile_picture' => $profile
-        ]);
 
-        $user->student()->create([
-            'gender'            => $request->gender,
-            'phone'             => $request->phone
-        ]);
+        $sql = "UPDATE users SET profile_picture = '$profile' WHERE id = $userId";
+        DB::statement($sql);
 
-        $user->assignRole('Student');
-
+        $gender = $request->gender;
+        $phone = $request->phone;
+        $sql = "INSERT INTO students (user_id, gender, phone) VALUES ($userId, '$gender', '$phone')";
+        DB::statement($sql);
+        
+        $sql = "INSERT INTO model_has_roles (role_id, model_type, model_id) VALUES (1, 'App\\Models\\User', $userId)";
+        DB::statement($sql);
         return redirect()->route('student.index');
     }
+
 
     /**
      * Display the specified resource.
