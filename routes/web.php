@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth','role:Teacher']], function ()
     Route::get('/homework/add','HomeworkController@addForm')->name('homework.addform');
     Route::post('/homework/add','HomeworkController@add')->name('homework.add');
     Route::get('/homework/solutionlist/{tid}','HomeworkController@solutionlist')->name('homework.solutionlist');
-    
+
     Route::get('/challenge/teacher','ChallengeController@teacher')->name('challenge.teacher');
     Route::get('challenge/form','ChallengeController@form')->name('challenge.form');
     Route::post('/challenge/create','ChallengeController@create')->name('challenge.create');
@@ -56,6 +56,7 @@ Route::post('/homework/addsolution/{tid}/{sid}','HomeworkController@addSolution'
 Route::get('/message/send/{rid}','MessageController@sendForm')->name('message.sendmessage');
 Route::post('/message/send/{rid}/{sid}','MessageController@send')->name('message.send');
 Route::get('/message/index/{id}','MessageController@index')->name('message.index');
+Route::delete('/message/delete/{id}', 'MessageController@delete')->name('message.delete');
 
 Route::get('/homework/download/{filename}','HomeworkController@download')->name('homework.download');
 Route::get('/homework/downloadsolution/{filename}','HomeworkController@downloadSolution')->name('homework.downloadsolution');
