@@ -22,12 +22,21 @@ class HomeworkController extends Controller
     }
     public function add(Request $request){
         if ($request->hasFile('homeworkfile')){
-            $filename=$request->homeworkfile->getClientOriginalName();
+            $file = $request->file('homeworkfile');
+            $extension = $file->getClientOriginalExtension();
+            
+            if($extension !== 'txt') {
+                return back()->withErrors(['homeworkfile' => 'Only .txt files are allowed.']);
+            }
+            
+            $filename = $file->getClientOriginalName();
             DB::table('baitap')->insert([
                 'filename' => $filename,
             ]);
-            $request->homeworkfile->move(public_path('homeworkfolder'),$filename);
+            
+            $file->move(public_path('homeworkfolder'), $filename);
         }
+        
         return view('backend.homework.add');
     }
 
