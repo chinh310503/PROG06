@@ -16,6 +16,13 @@
                     <div class="w-3/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $sent->receiver_id }}</div>
                     <div class="w-3/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $sent->receiver_name }}</div>
                     <div class="w-3/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $sent->msg }}</div>
+                    <div class="w-1/12 px-4 py-3">
+                        <form action="{{ route('message.delete', $sent->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa tin nhắn này?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-700">Xóa</button>
+                        </form>
+                    </div>
                 </div>
             @endforeach
         </div>
