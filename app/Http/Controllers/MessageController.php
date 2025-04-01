@@ -36,6 +36,16 @@ class MessageController extends Controller
         return redirect()->route('home');
     }
 
+    public function delete($id) {
+        DB::table('message')->where('id', $id)->delete();
+        return redirect()->back()->with('success', 'Tin nhắn đã được xóa.');
+    }
+    
+    public function edit($id) {
+        $message = DB::table('message')->where('id', $id)->first();
+        return view('backend.message.edit', compact('message'));
+    }
+
     public function sendForm($rid){
         return view('backend.message.send', ['rid'=>$rid]);
     }
